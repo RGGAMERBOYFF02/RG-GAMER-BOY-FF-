@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>RG GAMER BOY FF — Fresh Restart</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#070a12;color:#fff;min-height:100vh}
+header{padding:22px 16px;text-align:center;background:linear-gradient(135deg,#111a38,#24103b);border-bottom:1px solid #333}
+.logo{font-size:27px;font-weight:900;color:#ffd23f;text-shadow:0 0 14px #ff8c00}
+.tag{color:#bfc7da;margin-top:6px;font-size:13px}
+.container{max-width:900px;margin:auto;padding:16px}
+.page{display:none;animation:fade .25s ease}.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hero,.box{padding:20px;border-radius:18px;background:#111522;border:1px solid #292f44;margin-bottom:14px}
+.hero{background:linear-gradient(135deg,#151c33,#1b1030)}
+h1{font-size:25px;margin-bottom:9px}h2{font-size:21px;margin-bottom:12px;color:#ffd23f}
+p,li{color:#c7ccdc;line-height:1.6}ul{padding-left:20px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.card{padding:17px;border-radius:16px;background:#111522;border:1px solid #292f44}
+.card h3{margin:8px 0 6px}.card p{font-size:13px}.icon{font-size:27px}
+.btn{display:block;width:100%;margin-top:12px;padding:12px;border:0;border-radius:11px;background:#ffd23f;color:#111;font-weight:800;text-decoration:none;text-align:center;cursor:pointer}
+.back{background:#222a3d;color:#fff}
+.item{padding:13px;margin:8px 0;border-radius:12px;background:#101522;border:1px solid #252b3d}
+.leader-row{display:flex;align-items:center;gap:8px;white-space:nowrap;width:max-content;max-width:100%}
+.rank{flex:0 0 auto}
+.leader-name{flex:0 0 auto;min-width:185px;padding:10px 16px;border-radius:12px;font-size:16px;font-weight:900;color:#fff;position:relative;overflow:hidden;isolation:isolate}
+.leader-name:before{content:"";position:absolute;inset:-60%;z-index:-2;background:conic-gradient(from 0deg,#ffd23f,#ff3b81,#7c4dff,#00e5ff,#ffd23f);animation:nameSpin 3s linear infinite}
+.leader-name:after{content:"";position:absolute;inset:2px;border-radius:10px;z-index:-1;background:#17101f}
+@keyframes nameSpin{to{transform:rotate(360deg)}}
+
+
+.reward-card{position:relative;padding:12px;border:1px solid #343b58;border-radius:14px;background:linear-gradient(145deg,#111727,#0a0e18);overflow:hidden;transition:.25s}
+.reward-card:hover{transform:translateY(-2px);border-color:#ffd23f;box-shadow:0 0 18px rgba(255,210,63,.18)}
+.reward-card .reward-icon{font-size:30px;display:block;margin-bottom:5px}
+.reward-card .reward-name{font-weight:900;font-size:13px}
+.reward-card .reward-status{font-size:10px;margin-top:5px;color:#98a3bd}
+.reward-card.unlocked{border-color:#ffd23f;box-shadow:0 0 16px rgba(255,210,63,.2)}
+.reward-card.unlocked .reward-status{color:#7dffb2}
+.special-name-live{display:inline-block;font-weight:1000;letter-spacing:1px;background:linear-gradient(90deg,#ffd23f,#ff4fa3,#00e5ff,#7c4dff,#ffd23f);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:nameRainbow 2.5s linear infinite}
+@keyframes nameRainbow{to{background-position:300% 0}}
+.screen-glow-live:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9997;box-shadow:inset 0 0 90px rgba(0,229,255,.22),inset 0 0 170px rgba(255,79,163,.12);animation:screenGlow 2.2s infinite}
+@keyframes screenGlow{50%{opacity:.45}}
+.vip-profile{animation:vipBorder 2s infinite}
+@keyframes vipBorder{50%{box-shadow:0 0 32px rgba(255,210,63,.55)}}
+.custom-background-active{background-size:cover!important;background-position:center!important;background-attachment:fixed!important}
+.vip-profile{border:2px solid #ffd23f!important;box-shadow:0 0 28px rgba(255,210,63,.45);background:linear-gradient(135deg,#17111f,#2a1b08,#111522)!important}
+.vip-profile #profileHeader{background:linear-gradient(90deg,#3a2300,#6b4700,#3a2300);border-color:#ffd23f;color:#ffe58a;box-shadow:0 0 18px rgba(255,210,63,.35)}
+.vip-badge-live{display:inline-block;margin-left:7px;padding:3px 7px;border-radius:8px;background:#ffd23f;color:#17100a;font-size:10px;font-weight:900;vertical-align:middle}
+.reward-on{border:1px solid #ffd23f;box-shadow:0 0 14px rgba(255,210,63,.25);animation:rewardPulse 1.8s infinite}
+@keyframes rewardPulse{50%{transform:translateY(-1px);box-shadow:0 0 22px rgba(255,210,63,.45)}}
+#rewardList .item{margin:7px 0;padding:10px}
+.leader-points{flex:0 0 auto;font-size:24px;font-weight:900;color:#ffd23f}
+footer{text-align:center;color:#727b91;font-size:12px;padding:25px 10px}
+@media(max-width:600px){.grid{grid-template-columns:1fr 1fr}}
+</style>
+
+<script>try {  localStorage.removeItem("rgff_last_spin");  localStorage.removeItem("rgff_daily_reward");  localStorage.removeItem("rgff_unlocked_rewards");localStorage.removeItem("rgff_custom_background");localStorage.removeItem("rgff_taps");localStorage.removeItem("rgff_spins");localStorage.removeItem("rgff_online_started");localStorage.removeItem("rgff_taps");localStorage.removeItem("rgff_spins");localStorage.removeItem("rgff_online_started");  localStorage.removeItem("rgff_room_code");  localStorage.removeItem("rgff_room_pass");  sessionStorage.removeItem("rgff_admin");} catch(e) {}</script>
+
+
+<style>
+/* VIP leaderboard: animation only on RG GAMER BOY FF */
+.leader-row .leader-name:not(.owner-name):before,
+.leader-row .leader-name:not(.owner-name):after{animation:none!important;background:#17101f!important}
+.leader-row .leader-name:not(.owner-name){text-shadow:none!important;background:#17101f!important}
+.owner-name{border:1px solid rgba(255,210,63,.55);box-shadow:0 0 14px rgba(255,210,63,.20)}
+.owner-name:before{content:""!important;position:absolute!important;inset:-60%!important;z-index:-2!important;background:conic-gradient(from 0deg,#ffd23f,#ff3b81,#7c4dff,#00e5ff,#ffd23f)!important;animation:nameSpin 3s linear infinite!important}
+.owner-name:after{content:""!important;position:absolute!important;inset:2px!important;border-radius:10px!important;z-index:-1!important;background:#17101f!important}
+
+/* Premium access notification */
+.vip-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(7px);display:flex;align-items:center;justify-content:center;z-index:10000;padding:18px}
+.vip-modal{width:min(390px,94vw);border:1px solid rgba(255,210,63,.55);border-radius:22px;padding:22px;background:linear-gradient(145deg,#17101f,#0d1423 55%,#211600);box-shadow:0 0 45px rgba(255,210,63,.20),0 20px 70px rgba(0,0,0,.55);text-align:center;animation:vipModalIn .28s ease}
+.vip-modal-icon{width:58px;height:58px;margin:0 auto 10px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,#ffd23f,#7a4e00);box-shadow:0 0 22px rgba(255,210,63,.45);font-size:28px}
+.vip-modal-title{font-size:19px;font-weight:900;color:#ffd23f;margin-bottom:7px}
+.vip-modal-text{font-size:13px;color:#c7ccdc;line-height:1.55}
+.vip-modal-badge{display:inline-block;margin-top:12px;padding:5px 10px;border-radius:999px;background:rgba(255,210,63,.12);border:1px solid rgba(255,210,63,.35);color:#ffe58a;font-size:10px;font-weight:900;letter-spacing:.6px}
+.vip-modal-btn{margin-top:16px;width:100%;padding:11px;border:0;border-radius:11px;background:#ffd23f;color:#17100a;font-weight:900;cursor:pointer}
+.vip-24h-timer{margin-top:13px;padding:11px 10px;border-radius:12px;background:#070a10;border:1px solid rgba(255,210,63,.38);color:#ffd23f;font-size:25px;font-weight:900;letter-spacing:1px;font-variant-numeric:tabular-nums}
+.vip-24h-note{margin-top:6px;color:#929caf;font-size:10px;line-height:1.4}
+
+@keyframes vipModalIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+</style>
+
+</head>
+<body>
+<header><div class="logo">🔥 RG GAMER BOY FF 🔥</div><div class="tag">Free Fire Community • Tips • Events • Gaming</div></header>
+<main class="container">
+
+<section id="home" class="page active">
+<div class="hero"><h1>Welcome, Gamer! 🎮</h1><p>One place for Free Fire players — guides, events, sensitivity, tournaments and community updates.</p></div>
+<div class="grid">
+<div class="card"><div class="icon">🔥</div><h3>FF 2022 Problem Solution</h3><p>Common FF 2022 problems and troubleshooting steps.</p><button class="btn" onclick="openPage('tips')">Open</button></div>
+<div class="card"><div class="icon">📰</div><h3>Updates & Events</h3><p>New events and game announcements.</p><button class="btn" onclick="openPage('updates')">Open</button></div>
+<div class="card"><div class="icon">🎁</div><h3>FF 2022 Colorful Name Code</h3><p>FF 2022 colorful name and color code collection.</p><button class="btn" onclick="openPage('codes')">Check</button></div>
+<div class="card"><div class="icon">💬</div><h3>Discord Community</h3><p>Join the RG GAMER BOY FF Discord community.</p><a class="btn" href="https://discord.gg/9sfHDJGf2" target="_blank" rel="noopener noreferrer">💬 Join Discord</a></div>
+<div class="card"><div class="icon">📊</div><h3>Leaderboard</h3><p>Community player rankings.</p><button class="btn" onclick="openPage('leaderboard')">View</button></div>
+<div class="card"><div class="icon">🎯</div><h3>Sensitivity & HUD</h3><p>Sample sensitivity and HUD settings.</p><button class="btn" onclick="openPage('sensitivity')">Open</button></div>
+<div class="card"><div class="icon">🖼️</div><h3>Profile Banner</h3><p>Gaming profile and banner section.</p><button class="btn" onclick="profileBannerTap()">Open</button></div>
+<div class="card"><div class="icon">📢</div><h3>Community</h3><p>WhatsApp and YouTube community.</p><button class="btn" onclick="openPage('community')">Join</button></div>
+</div>
+</div></section>
+
+<section id="tips" class="page">
+<div class="box">
+<h2>🛠️ FF 2022 Problem Solution</h2>
+
+<div class="item">
+<h3>⬛ Black Screen Problem</h3>
+<p><b>Possible cause:</b> Missing permissions, blocked access, corrupted files, or an app compatibility issue.</p>
+<p><b>Solution:</b> Open Android Settings → Apps → FF 2022 → Permissions and allow the permissions the game legitimately needs. Also check storage access, restart the game, and make sure the game files are complete and from a trusted source.</p>
+</div>
+
+<div class="item">
+<h3>↩️ Auto Back / App Closing Problem</h3>
+<p><b>Possible cause:</b> An incompatible app build or architecture can cause crashes on newer Android versions.</p>
+<p><b>Solution:</b> On Android 16, use a version officially compatible with your device. Android apps normally use 32-bit or 64-bit builds—there is no standard “62-bit” version. Do not install an unknown APK just to fix this issue. Update the game/app and Android System WebView, then try again.</p>
+</div>
+
+<div class="item">
+<h3>🌐 Network Problem</h3>
+<p><b>Possible cause:</b> Weak internet, DNS problems, server downtime, or blocked network access.</p>
+<p><b>Solution:</b> First test Wi-Fi/mobile data, restart your connection, check whether the game servers are online, and make sure the app is allowed to use mobile data. A VPN may help in some routing or regional cases, but it is not a guaranteed fix and should only be used where permitted.</p>
+</div>
+
+<div class="item">
+<h3>💥 Game Crash / Force Close</h3>
+<p><b>Solution:</b> Restart the device, close background apps, clear the app cache, keep enough free storage available, and install the latest official compatible version.</p>
+</div>
+
+<div class="item">
+<h3>📶 High Ping / Lag Spikes</h3>
+<p><b>Possible cause:</b> Unstable Wi-Fi/mobile data, background downloads, or a busy network.</p>
+<p><b>Solution:</b> Switch between Wi-Fi and mobile data to test, stop background downloads, restart the router/mobile connection, and choose the nearest available game server when the game provides a server option.</p>
+</div>
+
+<div class="item">
+<h3>🔊 Sound Problem</h3>
+<p><b>Solution:</b> Check media volume, Bluetooth/audio output, in-game sound settings, and Android app permissions. Restart the game after changing audio settings.</p>
+</div>
+
+</div>
+<button class="btn back" onclick="openPage('home')">← Back to Home</button>
+</section>
+<section id="updates" class="page">
+<div class="box">
+<h2>📰 Events & Deals</h2>
+
+<div class="item">
+<h3>🎁 FF 2022 B Batch Event Deal</h3>
+<p>Want the <b>FF 2022 B Batch</b>? For this community event, your YouTube channel should have:</p>
+<ul>
+<li>▶️ <b>2,000+ subscribers</b></li>
+<li>👀 <b>1,000+ views on every video</b></li>
+<li>📹 Consistent gaming/content uploads</li>
+</ul>
+<p style="font-size:12px;margin-top:8px">⚠️ These are community-event requirements for this website, not an official Garena/YouTube badge eligibility rule.</p>
+</div>
+
+<div class="item">
+<h3>🎮 Creator Challenge</h3>
+<p>Upload a Free Fire gameplay clip, share it with the community, and get a chance to be featured on the website.</p>
+</div>
+
+<div class="item">
+<h3>🏆 Community Spotlight</h3>
+<p>Top active players and creators can be highlighted in the community section.</p>
+</div>
+
+<div class="item">
+<h3>🔥 Free Fire India</h3>
+<p><b>Free Fire India coming on 5 September to 25 September.</b></p>
+</div>
+
+<div class="item">
+<h3>⏳ Next Event Deal</h3>
+<p>🔥 <b>Coming Soon.</b> Check this section again in a few days for the next community event deal.</p>
+</div>
+
+</div>
+<button class="btn back" onclick="openPage('home')">← Back to Home</button>
+</section>
+<section id="codes" class="page">
+<div class="box">
+<h2>🎨 FF 2022 Colorful Name Code</h2>
+<p>These are <b>demo/example codes</b> for your website design. They are not real or guaranteed redeem codes.</p>
+
+<div class="item" style="border-left:5px solid #FF0000"><b style="color:#FF0000">RED</b> — <strong>#FF0000</strong></div>
+<div class="item" style="border-left:5px solid #FFFF00"><b style="color:#FFFF00">YELLOW</b> — <strong>#FFFF00</strong></div>
+<div class="item" style="border-left:5px solid #00FFFF"><b style="color:#00FFFF">CYAN</b> — <strong>#00FFFF</strong></div>
+<div class="item" style="border-left:5px solid #00FF00"><b style="color:#00FF00">GREEN</b> — <strong>#00FF00</strong></div>
+<div class="item" style="border-left:5px solid #800080"><b style="color:#800080">PURPLE</b> — <strong>#800080</strong></div>
+<div class="item" style="border-left:5px solid #FFA500"><b style="color:#FFA500">ORANGE</b> — <strong>#FFA500</strong></div>
+<div class="item" style="border-left:5px solid #FFC0CB"><b style="color:#FFC0CB">PINK</b> — <strong>#FFC0CB</strong></div>
+<div class="item" style="border-left:5px solid #FFFFFF"><b style="color:#FFFFFF">WHITE</b> — <strong>#FFFFFF</strong></div>
+<div class="item" style="border-left:5px solid #A52A2A"><b style="color:#A52A2A">BROWN</b> — <strong>#A52A2A</strong></div>
+<div class="item" style="border-left:5px solid #0000FF"><b style="color:#0000FF">BLUE</b> — <strong>#0000FF</strong></div>
+
+</div>
+<button class="btn back" onclick="openPage('home')">← Back to Home</button>
+</section>
+<section id="tournament" class="page">
+<div class="box">
+<h2>💬 Communities</h2>
+<p style="text-align:center">Join the official RG GAMER BOY FF communities.</p>
+
+<div class="item">
+<h3>💬 Discord Community</h3>
+<p>Join the Discord server for community updates and discussions.</p>
+<a class="btn" href="https://discord.gg/9sfHDJGf2" target="_blank" rel="noopener noreferrer">💬 Join Discord</a>
+</div>
+
+<div class="item">
+<h3>🟢 WhatsApp Community</h3>
+<p>Join the WhatsApp community for updates and announcements.</p>
+<button class="btn" onclick="openExternal('https://whatsapp.com/channel/0029VbD9yigGJP8Hkf8xWw3I');return false;">📱 Join WhatsApp</button>
+</div>
+
+<div class="item">
+<h3>▶️ YouTube Community</h3>
+<p>Follow RG GAMER BOY FF on YouTube.</p>
+<button class="btn" onclick="openExternal('https://www.youtube.com/@RG_GAMER_BOY_FF');return false;">▶️ Open YouTube</button>
+</div>
+
+</div>
+<button class="btn back" onclick="openPage('home')">← Back to Home</button>
+</section>
+
+<section id="leaderboard" class="page">
+<div class="box">
+<h2>📊 VIP Leaderboard</h2>
+<div class="item"><div class="leader-row"><span class="rank">🥇</span><span class="leader-name owner-name">RG GAMER BOY FF</span><span class="leader-points">♾️</span></div></div>
+<div class="item"><div class="leader-row"><span class="rank">🥈</span><span class="leader-name" style="min-width:150px">GAMER BOY</span><span class="leader-points" id="lb1">1120</span></div></div>
+<div class="item"><div class="leader-row"><span class="rank">🥉</span><span class="leader-name" style="min-width:150px">FF WARRIOR</span><span class="leader-points" id="lb2">980</span></div></div>
+<div class="item"><div class="leader-row"><span class="rank">4.</span><span class="leader-name" style="min-width:150px">HEADSHOT PRO</span><span class="leader-points" id="lb3">875</span></div></div>
+<div class="item"><div class="leader-row"><span class="rank">5.</span><span class="leader-name" style="min-width:150px">DARK FF</span><span class="leader-points" id="lb4">810</span></div></div>
+<p style="font-size:12px;margin-top:10px;text-align:center">👆 Every qualifying tap randomly adds <b>+5 points</b> to one of the four other players. RG GAMER BOY FF stays ♾️.</p>
+</div>
+<button class="btn back" onclick="openPage('home')">← Back to Home</button>
+</section>
+
+<section id="sensitivity" class="page">
+<div class="box">
+<h2>🎯 Sensitivity & HUD</h2>
+<p>Random sensitivity values are generated every time you open this page.</p>
+<div class="item">General: <b id="sensGeneral">--</b></div>
+<div class="item">Red Dot: <b id="sensRedDot">--</b></div>
+<div class="item">2X Scope: <b id="sens2x">--</b></div>
+<div class="item">4X Scope: <b id="sens4x">--</b></div>
+<div class="item">Free Look: <b id="sensFree">--</b></div>
+<button class="btn" onclick="randomSensitivity()">🎲 Randomize Again</button>
+</div>
+<button class="btn back" onclick="openPage('home')">← Back to Home</button>
+</section>
+<section id="profile" class="page">
+<div class="box" id="profileBox">
+<h2>🖼️ Profile</h2>
+<div class="item" id="profileHeader"><b>RG GAMER BOY FF</b></div>
+<div class="item">🔥 ELITE GAMER 🔥</div>
+<div id="backgroundRewardBox" class="item" style="display:none">
+<b>🌌 Background Change Unlocked</b>
+<p style="font-size:12px;margin-top:6px">Choose any image from your device to use as your website background.</p>
+<button class="btn" type="button" onclick="document.getElementById('bgFileInput').click()">🖼️ Choose From Gallery</button>
+<input id="bgFileInput" type="file" accept="image/*" style="display:none" onchange="setCustomBackground(event)">
+<button id="removeBgBtn" class="btn back" type="button" onclick="removeCustomBackground()" style="display:none">↩️ Remove Custom Background</button>
+</div>
+<div id="vipProfileStatus" class="item" style="display:none">
+👑 <b>VIP PROFILE</b><br>
+<small>VIP badge unlocked • VIP profile theme active • Premium profile styling enabled</small>
+</div>
+<div class="item">⭐ Status: <b id="profileStatusText">Elite Player</b></div>
+</div>
+<button class="btn back" onclick="openPage('home')">← Back to Home</button>
+</section>
+<section id="community" class="page"><div class="box"><h2>📢 Community</h2><p>Join the RG GAMER BOY FF community for announcements and updates.</p><a class="btn" href="https://www.youtube.com/@RG_GAMER_BOY_FF" target="_blank">▶ YouTube</a><a class="btn" href="https://whatsapp.com/channel/0029VbD9yigGJP8Hkf8xWw3I" target="_blank">💬 WhatsApp</a></div><button class="btn back" onclick="openPage('home')">← Back to Home</button></section>
+
+</main>
+<footer>© 2026 RG GAMER BOY FF • Fan/Community Website</footer>
+<script>
+const ADMIN_PASSWORD = "RGAdmin@2026!";
+
+function publishPublicRoom(){
+  const code=localStorage.getItem('rgff_room_code');
+  const pass=localStorage.getItem('rgff_room_pass');
+  document.getElementById('publicCode').textContent=code||'Not published yet';
+  document.getElementById('publicPass').textContent=pass||'Not published yet';
+}
+
+function adminLogin(){
+  const input=document.getElementById('adminPassword').value;
+  const error=document.getElementById('adminError');
+  if(input===ADMIN_PASSWORD){
+    sessionStorage.setItem('rgff_admin','1');
+    document.getElementById('adminLogin').style.display='none';
+    document.getElementById('adminPanel').style.display='block';
+    loadRoom();
+  }else{
+    error.style.display='block';
+    error.textContent='❌ Incorrect admin password.';
+  }
+}
+
+function adminLogout(){
+  sessionStorage.removeItem('rgff_admin');
+  document.getElementById('adminLogin').style.display='block';
+  document.getElementById('adminPanel').style.display='none';
+  document.getElementById('adminPassword').value='';
+}
+
+function saveRoom(){
+  if(sessionStorage.getItem('rgff_admin')!=='1'){
+    alert('Admin login required.');
+    return;
+  }
+  const code=document.getElementById('roomCode').value.trim();
+  const pass=document.getElementById('roomPass').value.trim();
+  const status=document.getElementById('roomStatus');
+
+  if(!code || !pass){
+    status.style.display='block';
+    status.textContent='⚠️ Please enter both the Room Code and Room Password.';
+    return;
+  }
+
+  localStorage.setItem('rgff_room_code',code);
+  localStorage.setItem('rgff_room_pass',pass);
+  status.style.display='block';
+  status.textContent='✅ Room details published on this device.';
+  publishPublicRoom();
+}
+
+function clearRoom(){
+  if(sessionStorage.getItem('rgff_admin')!=='1'){
+    alert('Admin login required.');
+    return;
+  }
+  localStorage.removeItem('rgff_room_code');
+  localStorage.removeItem('rgff_room_pass');
+  document.getElementById('roomCode').value='';
+  document.getElementById('roomPass').value='';
+  const status=document.getElementById('roomStatus');
+  status.style.display='block';
+  status.textContent='🗑️ Published room details cleared.';
+  publishPublicRoom();
+}
+
+function loadRoom(){
+  const code=localStorage.getItem('rgff_room_code');
+  const pass=localStorage.getItem('rgff_room_pass');
+  const codeInput=document.getElementById('roomCode');
+  const passInput=document.getElementById('roomPass');
+  if(codeInput) codeInput.value=code||'';
+  if(passInput) passInput.value=pass||'';
+}
+
+
+
+const spinRewards=[
+  {name:"Special Screen Effect",icon:"✨",weight:12},
+  {name:"Special Tap Effect",icon:"👆",weight:16},
+  {name:"VIP Badge",icon:"👑",weight:8},
+  {name:"Profile Icon",icon:"🖼️",weight:16},
+  {name:"Background Change",icon:"🎭",weight:12},
+  {name:"Background Change",icon:"🌌",weight:14},
+  {name:"Premium Profile Frame",icon:"💎",weight:8},
+  {name:"Special Name Effect",icon:"🔥",weight:14}
+];
+
+let spinBusy=false;
+
+function drawWheel(rotation=0){
+  const c=document.getElementById('spinCanvas');
+  if(!c)return;
+  const ctx=c.getContext('2d'), w=c.width, h=c.height, cx=w/2, cy=h/2, r=140;
+  const colors=["#ff3b30","#ffd23f","#00c2ff","#7c4dff","#35d07f","#ff7a00","#ff4fa3","#00e5a0"];
+  ctx.clearRect(0,0,w,h);
+  const slice=Math.PI*2/spinRewards.length;
+  ctx.save();
+  ctx.translate(cx,cy);
+  ctx.rotate(rotation);
+  spinRewards.forEach((item,i)=>{
+    const a=-Math.PI/2+i*slice;
+    ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,r,a,a+slice);ctx.closePath();
+    ctx.fillStyle=colors[i];ctx.fill();
+    ctx.strokeStyle="#fff";ctx.lineWidth=2;ctx.stroke();
+    ctx.save();
+    ctx.rotate(a+slice/2);
+    ctx.textAlign="center";ctx.fillStyle="#fff";ctx.font="bold 24px Arial";ctx.fillText(item.icon,88,8);
+    ctx.font="bold 11px Arial";ctx.fillText(item.name.split(" ").slice(0,2).join(" "),88,29);
+    ctx.restore();
+  });
+  ctx.beginPath();ctx.arc(0,0,35,0,Math.PI*2);ctx.fillStyle="#111522";ctx.fill();ctx.strokeStyle="#ffd23f";ctx.lineWidth=4;ctx.stroke();
+  ctx.fillStyle="#ffd23f";ctx.font="bold 13px Arial";ctx.textAlign="center";ctx.fillText("SPIN",0,5);
+  ctx.restore();
+}
+
+function pickReward(){
+  const total=spinRewards.reduce((s,x)=>s+x.weight,0);
+  let n=Math.random()*total;
+  for(const r of spinRewards){n-=r.weight;if(n<=0)return r}
+  return spinRewards[spinRewards.length-1];
+}
+
+
+
+
+const rewardDescriptions={
+  "Special Screen Effect":"Adds a premium animated glow around the website.",
+  "Special Tap Effect":"Adds a sparkle burst whenever you tap buttons or links.",
+  "VIP Badge":"Turns your profile into VIP mode with a VIP badge and premium styling.",
+  "Profile Icon":"Changes your profile icon and displays it in the profile/header.",
+  "Background Change":"Unlocks Gallery Picker so you can set your own image as the site background.",
+  "Premium Profile Frame":"Adds a premium glowing frame around profile/content cards.",
+  "Special Name Effect":"Makes RG GAMER BOY FF appear with an animated premium name effect.",
+  "Premium Profile Frame":"Adds a premium glowing frame around profile/content cards."
+};
+
+function renderRewardShowcase(){
+  const wrap=document.getElementById("rewardCards");
+  if(!wrap)return;
+  const unlocked=getUnlockedRewards().map(x=>x.name);
+  wrap.innerHTML=spinRewards.map(r=>{
+    const on=unlocked.includes(r.name);
+    return `<div class="reward-card ${on?"unlocked":""}">
+      <span class="reward-icon">${r.icon}</span>
+      <div class="reward-name">${r.name}</div>
+      <div class="reward-status">${on?"✅ UNLOCKED • ACTIVE":"🔒 LOCKED"}</div>
+      <div style="font-size:10px;margin-top:7px;color:#aeb7ca">${rewardDescriptions[r.name]||"A special Daily Spin reward."}</div>
+    </div>`;
+  }).join("");
+}
+
+function addActivity(text){
+  const log=document.getElementById("activityLog");
+  if(!log)return;
+  const now=new Date().toLocaleTimeString();
+  const current=log.innerHTML==="No activity yet." ? "" : log.innerHTML;
+  log.innerHTML=`<div>• ${now} — ${text}</div>`+current;
+  const lines=log.querySelectorAll("div");
+  if(lines.length>6)lines[lines.length-1].remove();
+}
+
+function updateProfileStats(){
+  const rewards=getUnlockedRewards();
+  const taps=Number(localStorage.getItem("rgff_taps")||0);
+  const spins=Number(localStorage.getItem("rgff_spins")||0);
+  const started=Number(localStorage.getItem("rgff_online_started")||Date.now());
+  const seconds=Math.max(0,Math.floor((Date.now()-started)/1000));
+  const el=id=>document.getElementById(id);
+  if(el("tapCount"))el("tapCount").textContent=taps;
+  if(el("spinCount"))el("spinCount").textContent=spins;
+  if(el("rewardCount"))el("rewardCount").textContent=rewards.length;
+  if(el("onlineTime")){
+    const m=Math.floor(seconds/60),s=seconds%60,h=Math.floor(m/60);
+    el("onlineTime").textContent=h?`${h}h ${m%60}m ${s}s`:m?`${m}m ${s}s`:`${s}s`;
+  }
+  if(el("liveVip"))el("liveVip").style.display=rewards.some(r=>r.name==="VIP Badge")?"inline-block":"none";
+  const icon=rewards.some(r=>r.name==="Profile Icon")?"👑":"🙂";
+  if(el("liveAvatar"))el("liveAvatar").textContent=icon;
+}
+
+function activateReward(reward){
+  const name=reward.name;
+  addActivity(`Unlocked ${reward.icon} ${name}`);
+
+  if(name==="Profile Icon"){
+    document.querySelectorAll(".logo").forEach(x=>x.innerHTML="👑 <span class='special-name-live'>RG GAMER BOY FF</span>");
+    document.querySelectorAll(".hero").forEach(x=>x.style.borderColor="#00e5ff");
+    addActivity("Profile Icon is now visible on the website");
+  }
+
+  if(name==="VIP Badge"){
+    document.querySelectorAll(".box,.card").forEach(x=>x.classList.add("vip-profile"));
+    const logo=document.querySelector(".logo");
+    if(logo && !logo.innerHTML.includes("VIP")) logo.innerHTML="👑 <span class='special-name-live'>RG GAMER BOY FF</span> <span class='vip-badge-live'>VIP</span>";
+    addActivity("VIP profile theme is active");
+  }
+
+  if(name==="Premium Profile Frame"){
+    document.querySelectorAll(".box,.card").forEach(x=>{
+      x.style.border="2px solid #ffd23f";
+      x.style.boxShadow="0 0 18px rgba(255,210,63,.22)";
+    });
+    addActivity("Premium frames are active");
+  }
+
+  if(name==="Special Name Effect"){
+    document.querySelectorAll(".logo,.leader-name").forEach(x=>{
+      x.innerHTML=`<span class="special-name-live">${x.textContent.trim()}</span>`;
+    });
+    addActivity("Special animated name effect is active");
+  }
+
+  if(name==="Background Change"){
+    showBackgroundPicker(true);
+    const savedBg=localStorage.getItem("rgff_custom_background");
+    if(savedBg) applyCustomBackground(savedBg);
+    addActivity("Background Gallery is unlocked");
+  }
+
+  if(name==="Special Screen Effect"){
+    document.body.classList.add("screen-glow-live");
+    addActivity("Premium screen effect is active");
+  }
+
+  if(name==="Special Tap Effect"){
+    if(!window.__tapEffectInstalled){
+      window.__tapEffectInstalled=true;
+      document.addEventListener("click",function(e){
+        if(!e.target.closest("button,.btn,a"))return;
+        const s=document.createElement("span");
+        s.textContent=["✨","💥","⭐","💫"][Math.floor(Math.random()*4)];
+        s.style.position="fixed";s.style.left=e.clientX+"px";s.style.top=e.clientY+"px";
+        s.style.pointerEvents="none";s.style.zIndex="9999";s.style.fontSize="22px";
+        s.style.transition="transform .65s,opacity .65s";
+        document.body.appendChild(s);
+        requestAnimationFrame(()=>{s.style.transform="translateY(-38px) scale(1.7)";s.style.opacity="0"});
+        setTimeout(()=>s.remove(),700);
+      });
+    }
+    addActivity("Special Tap Effect is active");
+  }
+
+  renderRewardShowcase();
+}
+
+function getUnlockedRewards(){
+  try{return JSON.parse(localStorage.getItem("rgff_unlocked_rewards")||"[]")}catch(e){return []}
+}
+
+function unlockReward(reward){
+  const rewards=getUnlockedRewards();
+  const exists=rewards.some(x=>x.name===reward.name);
+  if(!exists){
+    rewards.push({name:reward.name,icon:reward.icon,unlockedAt:new Date().toLocaleString()});
+    localStorage.setItem("rgff_unlocked_rewards",JSON.stringify(rewards));
+    activateReward(reward);
+  }else{
+    addActivity(`Won ${reward.icon} ${reward.name} again`);
+  }
+  applyRewardEffects(rewards);
+  renderRewards(rewards);
+  renderRewardShowcase();
+  updateProfileStats();
+}
+
+
+function showBackgroundPicker(enabled){
+  const box=document.getElementById("backgroundRewardBox");
+  if(box) box.style.display=enabled ? "block" : "none";
+  const remove=document.getElementById("removeBgBtn");
+  if(remove) remove.style.display=localStorage.getItem("rgff_custom_background") ? "block" : "none";
+}
+
+function setCustomBackground(event){
+  const file=event.target.files && event.target.files[0];
+  if(!file || !file.type.startsWith("image/")) return;
+  const reader=new FileReader();
+  reader.onload=function(){
+    const data=reader.result;
+    localStorage.setItem("rgff_custom_background",data);
+    applyCustomBackground(data);
+    showBackgroundPicker(true);
+  };
+  reader.readAsDataURL(file);
+}
+
+function applyCustomBackground(data){
+  if(!data) return;
+  document.body.style.backgroundImage="linear-gradient(rgba(3,6,14,.42),rgba(3,6,14,.58)),url('"+data+"')";
+  document.body.classList.add("custom-background-active");
+}
+
+function removeCustomBackground(){
+  localStorage.removeItem("rgff_custom_background");
+  document.body.style.backgroundImage="";
+  document.body.classList.remove("custom-background-active");
+  showBackgroundPicker(true);
+}
+
+function applyRewardEffects(rewards){
+  const names=rewards.map(x=>x.name);
+  document.body.classList.toggle("reward-on", names.length>0);
+
+  // Special screen effect
+  if(names.includes("Special Screen Effect")){
+    document.body.style.background="radial-gradient(circle at 50% 0%, #31204f 0%, #070a12 58%, #020308 100%)";
+  }
+
+  // Background Change
+  if(names.includes("Background Change")){
+    document.body.style.background="linear-gradient(135deg,#081b29,#26123f,#07151f)";
+    showBackgroundPicker(true);
+    const savedBg=localStorage.getItem("rgff_custom_background");
+    if(savedBg) applyCustomBackground(savedBg);
+  } else {
+    showBackgroundPicker(false);
+  }
+
+  // Special tap effect
+  if(names.includes("Special Tap Effect") && !window.__tapEffectInstalled){
+    window.__tapEffectInstalled=true;
+    document.addEventListener("click",function(e){
+      const s=document.createElement("span");
+      s.textContent="✨";
+      s.style.position="fixed";
+      s.style.left=e.clientX+"px";s.style.top=e.clientY+"px";
+      s.style.pointerEvents="none";s.style.zIndex="9999";s.style.fontSize="22px";
+      s.style.transition="transform .7s,opacity .7s";
+      document.body.appendChild(s);
+      requestAnimationFrame(()=>{s.style.transform="translateY(-35px) scale(1.5)";s.style.opacity="0"});
+      setTimeout(()=>s.remove(),700);
+    });
+  }
+
+  // VIP badge
+  if(names.includes("VIP Badge")){
+    document.querySelector(".logo").textContent="👑 VIP • RG GAMER BOY FF 👑";
+    const profileBox=document.getElementById("profileBox");
+    const vipStatus=document.getElementById("vipProfileStatus");
+    const profileStatus=document.getElementById("profileStatusText");
+    const header=document.getElementById("profileHeader");
+    if(profileBox) profileBox.classList.add("vip-profile");
+    if(vipStatus) vipStatus.style.display="block";
+    if(profileStatus) profileStatus.textContent="👑 VIP Player";
+    if(header && !header.querySelector(".vip-badge-live")){
+      header.innerHTML="<b>RG GAMER BOY FF</b><span class='vip-badge-live'>VIP</span>";
+    }
+  }
+
+  // Profile icon
+  if(names.includes("Profile Icon")){
+    const logo=document.querySelector(".logo");
+    logo.style.textShadow="0 0 18px #00e5ff";
+  }
+
+  // Avatar banner change
+  if(names.includes("Background Change")){
+    document.querySelectorAll(".hero").forEach(x=>{
+      x.style.background="linear-gradient(135deg,#24103b,#102d45,#3a172c)";
+      x.style.borderColor="#ffd23f";
+    });
+  }
+
+  // Premium profile frame
+  if(names.includes("Premium Profile Frame")){
+    document.querySelectorAll(".box,.card").forEach(x=>x.style.borderColor="#ffd23f");
+  }
+
+  // Name effect
+  if(names.includes("Special Name Effect")){
+    const name=document.querySelector(".leader-name");
+    if(name){
+      name.style.fontWeight="900";
+      name.style.textShadow="0 0 10px #ffd23f,0 0 18px #ff4fa3";
+    }
+  }
+}
+
+function renderRewards(rewards=getUnlockedRewards()){
+  const wrap=document.getElementById("rewardInventory"), list=document.getElementById("rewardList");
+  if(!wrap||!list)return;
+  wrap.style.display=rewards.length?"block":"none";
+  list.innerHTML=rewards.map(r=>`<div class="item reward-on">${r.icon} <b>${r.name}</b><br><small>✅ Unlocked & active</small></div>`).join("");
+}
+
+function spinDaily(){
+  if(spinBusy)return;
+  const last=null; // TEST MODE: unlimited spins
+  const today=new Date().toDateString();
+  if(false && last===today){
+    const saved=localStorage.getItem("rgff_daily_reward")||"Your reward";
+    const result=document.getElementById("spinResult");
+    result.style.display="block";
+    result.innerHTML="⏳ <b>Already Spun Today!</b><br>You won: <b>"+saved+"</b><br>Come back tomorrow.";
+    return;
+  }
+
+  spinBusy=true;
+  const btn=document.getElementById("spinBtn");
+  btn.disabled=true;btn.style.opacity=".55";btn.textContent="🎡 SPINNING...";
+  const reward=pickReward();
+  localStorage.setItem("rgff_spins",String(Number(localStorage.getItem("rgff_spins")||0)+1));
+  addActivity("Started a Daily Spin");
+  const index=spinRewards.indexOf(reward);
+  const slice=360/spinRewards.length;
+  const target=360*6+(360-(index*slice+slice/2));
+  const canvas=document.getElementById("spinCanvas");
+  const start=performance.now(), duration=4200;
+  let from=0;
+
+  function animate(t){
+    const p=Math.min(1,(t-start)/duration);
+    const ease=1-Math.pow(1-p,4);
+    drawWheel((from+target*ease)*Math.PI/180);
+    if(p<1){requestAnimationFrame(animate)}
+    else{
+      // TEST MODE: do not lock the daily spin
+      unlockReward(reward);
+      const result=document.getElementById("spinResult");
+      result.style.display="block";
+      result.innerHTML="🎉 <b>CONGRATULATIONS!</b><br><span style='font-size:28px'>"+reward.icon+"</span><br><b>"+reward.name+"</b><br><small>Reward unlocked and activated on this device.</small>";
+      btn.textContent="✅ CLAIMED TODAY";
+      document.getElementById("spinTimer").textContent="Come back tomorrow for another spin.";
+      spinBusy=false;
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+function initDailySpin(){
+  drawWheel(0);
+  const rewards=getUnlockedRewards();
+  applyRewardEffects(rewards);
+  renderRewards(rewards);
+
+  const last=localStorage.getItem("rgff_last_spin");
+  const today=new Date().toDateString();
+  if(last===today){
+    document.getElementById("spinBtn").disabled=true;
+    document.getElementById("spinBtn").style.opacity=".55";
+    document.getElementById("spinBtn").textContent="✅ CLAIMED TODAY";
+    const saved=localStorage.getItem("rgff_daily_reward");
+    const result=document.getElementById("spinResult");
+    if(saved){
+      result.style.display="block";
+      result.innerHTML="🏆 Today's Reward: <b>"+saved+"</b>";
+    }
+    document.getElementById("spinTimer").textContent="Come back tomorrow for another spin.";
+  }
+}
+
+
+
+let profileBannerTapCount=0;
+
+function showVipNotice(title,text,icon="👑"){
+  const old=document.getElementById("vipAccessModal");
+  if(old)old.remove();
+  const wrap=document.createElement("div");
+  wrap.id="vipAccessModal";
+  wrap.className="vip-modal-backdrop";
+  wrap.innerHTML=`<div class="vip-modal">
+    <div class="vip-modal-icon">${icon}</div>
+    <div class="vip-modal-title">${title}</div>
+    <div class="vip-modal-text">${text}</div>
+    <div class="vip-modal-badge">RG GAMER BOY FF • VIP ACCESS</div>
+    <button class="vip-modal-btn" onclick="document.getElementById('vipAccessModal').remove()">CONTINUE</button>
+  </div>`;
+  document.body.appendChild(wrap);
+}
+
+function profileBannerTap(){
+  if(enforceVip24HourLock()) return;
+  profileBannerTapCount++;
+  if(profileBannerTapCount===1){
+    showVipNotice("VIP Access Required","This Profile Banner feature is currently reserved for players who have unlocked the required access.","🔒");
+    return;
+  }
+  if(profileBannerTapCount===2){
+    showVipNotice("Please Hold On","Your access request is being checked. Stay on the page and try again when the feature becomes available.","⏳");
+    return;
+  }
+  startVip24HourLock();
+}
+
+
+const VIP_24H_LOCK_KEY = "rgff_profile_vip_lock_until";
+const VIP_24H_LOCK_STARTED = "rgff_profile_vip_lock_started";
+const VIP_24H_LOCK_MS = 24 * 60 * 60 * 1000;
+let vip24hInterval = null;
+
+function vip24hFormat(until){
+  let seconds = Math.max(0, Math.floor((until - Date.now()) / 1000));
+  const hours = Math.floor(seconds / 3600);
+  seconds %= 3600;
+  const minutes = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return String(hours).padStart(2,"0") + ":" +
+         String(minutes).padStart(2,"0") + ":" +
+         String(secs).padStart(2,"0");
+}
+
+function getVip24hUntil(){
+  const value = Number(localStorage.getItem(VIP_24H_LOCK_KEY) || 0);
+  return Number.isFinite(value) ? value : 0;
+}
+
+function startVip24HourLock(){
+  let until = getVip24hUntil();
+
+  // Create the lock once and persist the exact expiry timestamp.
+  // localStorage survives refreshes and closing/reopening the browser.
+  if(until <= Date.now()){
+    const started = Date.now();
+    until = started + VIP_24H_LOCK_MS;
+    localStorage.setItem(VIP_24H_LOCK_STARTED, String(started));
+    localStorage.setItem(VIP_24H_LOCK_KEY, String(until));
+  }
+
+  showVip24HourNotice(until);
+}
+
+function showVip24HourNotice(until){
+  const old = document.getElementById("vipAccessModal");
+  if(old) old.remove();
+  if(vip24hInterval) clearInterval(vip24hInterval);
+
+  const wrap = document.createElement("div");
+  wrap.id = "vipAccessModal";
+  wrap.className = "vip-modal-backdrop";
+
+  // Same original VIP notification UI; only the requested 24-hour timer is added.
+  wrap.innerHTML = `<div class="vip-modal">
+    <div class="vip-modal-icon">🔒</div>
+    <div class="vip-modal-title">Your VIP Access Locked</div>
+    <div class="vip-modal-text">Profile Banner access is blocked for this test.</div>
+    <div class="vip-modal-badge">RG GAMER BOY FF • VIP ACCESS</div>
+    <div class="vip-24h-timer" id="vip24hTimer">${vip24hFormat(until)}</div>
+    <div class="vip-24h-note">This lock is saved on this device and will remain until the timer reaches 00:00:00.</div>
+  </div>`;
+
+  document.body.appendChild(wrap);
+
+  const tick = () => {
+    const remaining = until - Date.now();
+    const timer = document.getElementById("vip24hTimer");
+
+    if(remaining <= 0){
+      clearInterval(vip24hInterval);
+      vip24hInterval = null;
+      localStorage.removeItem(VIP_24H_LOCK_KEY);
+      localStorage.removeItem(VIP_24H_LOCK_STARTED);
+      wrap.remove();
+      profileBannerTapCount = 0;
+      return;
+    }
+
+    if(timer) timer.textContent = vip24hFormat(until);
+  };
+
+  tick();
+  vip24hInterval = setInterval(tick, 1000);
+}
+
+function enforceVip24HourLock(){
+  const until = getVip24hUntil();
+
+  if(until > Date.now()){
+    showVip24HourNotice(until);
+    return true;
+  }
+
+  // Expired: remove all saved lock data so the old UI becomes usable again.
+  localStorage.removeItem(VIP_24H_LOCK_KEY);
+  localStorage.removeItem(VIP_24H_LOCK_STARTED);
+  if(vip24hInterval){
+    clearInterval(vip24hInterval);
+    vip24hInterval = null;
+  }
+  return false;
+}
+
+function openExternal(url){
+  try {
+    window.open(url,"_blank","noopener,noreferrer");
+  } catch(e) {
+    window.location.href=url;
+  }
+}
+
+function randomSensitivity(){
+  const randomValue = () => Math.floor(70 + Math.random() * 31); // 70–100 inclusive
+  document.getElementById("sensGeneral").textContent = randomValue();
+  document.getElementById("sensRedDot").textContent = randomValue();
+  document.getElementById("sens2x").textContent = randomValue();
+  document.getElementById("sens4x").textContent = randomValue();
+  document.getElementById("sensFree").textContent = randomValue();
+}
+
+function openPage(id){
+  if(enforceVip24HourLock()) return;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const p=document.getElementById(id);
+  if(p)p.classList.add('active');
+  if(id==='sensitivity') randomSensitivity();
+  window.scrollTo({top:0,behavior:'smooth'});
+  history.replaceState(null,'','#'+id);
+  if(id==='customroom') publishPublicRoom();
+  if(id==='admin' && sessionStorage.getItem('rgff_admin')==='1'){
+    document.getElementById('adminLogin').style.display='none';
+    document.getElementById('adminPanel').style.display='block';
+    loadRoom();
+  }
+}
+
+
+const leaderboardPlayers=[
+  {id:"lb1",key:"rgff_lb1",base:1120},
+  {id:"lb2",key:"rgff_lb2",base:980},
+  {id:"lb3",key:"rgff_lb3",base:875},
+  {id:"lb4",key:"rgff_lb4",base:810}
+];
+function renderVipLeaderboard(){
+  leaderboardPlayers.forEach(p=>{
+    const el=document.getElementById(p.id);
+    if(el) el.textContent=String(Number(localStorage.getItem(p.key)??p.base));
+  });
+}
+function addRandomVipPoints(){
+  const p=leaderboardPlayers[Math.floor(Math.random()*leaderboardPlayers.length)];
+  const current=Number(localStorage.getItem(p.key)??p.base);
+  localStorage.setItem(p.key,String(current+5));
+  renderVipLeaderboard();
+}
+
+window.addEventListener("pageshow",()=>{
+  enforceVip24HourLock();
+});
+
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState === "visible") enforceVip24HourLock();
+});
+
+window.addEventListener('load',()=>{
+  if(enforceVip24HourLock()) return;
+  if(!localStorage.getItem("rgff_online_started")) localStorage.setItem("rgff_online_started",String(Date.now()));
+  updateProfileStats();
+  setInterval(updateProfileStats,1000);
+  document.addEventListener("click",function(e){
+    if(enforceVip24HourLock()){
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    if(e.target.closest("button,.btn,a,input")) {
+      addRandomVipPoints();
+    }
+  });
+initDailySpin();
+  renderVipLeaderboard();
+  publishPublicRoom();
+  const id=location.hash.replace('#','');
+  if(id&&document.getElementById(id)) openPage(id); else randomSensitivity();
+});
+</script>
+</body>
+</html>
