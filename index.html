@@ -1521,43 +1521,56 @@ function openPage(id){
 }
 
 
-const leaderboardPlayers=[];
+function startFirebaseLeaderboard(){
 
-function renderVipLeaderboard(){
-  const container=document.getElementById("rgLeaderboardRows");
-  if(!container) return;
+  const boardRef =
+    firebaseRef(window.db,"leaderboard");
 
-  const players=leaderboardPlayers.map(p=>({
-    ...p,
-    points:Number(localStorage.getItem(p.key)??0)
-  }))
-  .filter(p=>p.name && p.name!=="RG GAMER BOY FF" && p.points>0)
-  .sort((a,b)=>b.points-a.points);
+  firebaseOnValue(boardRef,(snapshot)=>{
 
-  container.innerHTML = `
+    const data = snapshot.val() || {};
+
+    const players =
+      Object.values(data)
+      .filter(p=>p.name && p.name!=="RG GAMER BOY FF")
+      .sort((a,b)=>b.points-a.points);
+
+    const container =
+      document.getElementById("rgLeaderboardRows");
+
+    if(!container) return;
+
+    container.innerHTML = `
 <div class="item">
   <div class="leader-row">
     <span class="rank">👑</span>
-    <span class="leader-name owner-name special-name-live" style="min-width:90px;color:#ffd700;font-weight:bold;text-shadow:0 0 8px #ffd700,0 0 15px #ffd700">
+    <span class="leader-name owner-name special-name-live"
+      style="min-width:90px;color:#ffd700;font-weight:bold;text-shadow:0 0 8px #ffd700,0 0 15px #ffd700">
       RG GAMER BOY FF
     </span>
     <span class="leader-points">∞</span>
   </div>
 </div>
 ` + players.slice(0,4).map((p,index)=>{
-    const rank=index===0?"🥈":index===1?"🥉":String(index+2)+".";
-    return `<div class="item">
-      <div class="leader-row">
-        <span class="rank">${rank}</span>
-        <span class="leader-name" style="min-width:90px">${p.name}</span>
-        <span class="leader-points">${p.points} Points</span>
-      </div>
-    </div>`;
-  }).join("");
-}
 
-function getCurrentLeaderboardPlayer(){
-  try{
+      const rank =
+        index===0 ? "🥈" :
+        index===1 ? "🥉" :
+        String(index+2)+".";
+
+      return `
+<div class="item">
+  <div class="leader-row">
+    <span class="rank">${rank}</span>
+    <span class="leader-name" style="min-width:90px">${p.name}</span>
+    <span class="leader-points">${p.points} Points</span>
+  </div>
+</div>`;
+    }).join("");
+
+  });
+
+  }
     const login=JSON.parse(localStorage.getItem("rg_player_login_v1")||"{}");
     const name=(login.username||"").trim();
     if(!name || name==="RG GAMER BOY FF") return null;
